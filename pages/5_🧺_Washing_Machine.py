@@ -18,7 +18,7 @@ def main():
     .lg-model { font-size: 12px; color: #666; margin-bottom: 12px; }
     .lg-rating { color: #fabb05; font-size: 13px; margin-bottom: 16px; text-align: right;}
     .lg-img-box { text-align: center; padding: 10px 0; border-bottom: 1px solid #eee; margin-bottom: 16px; height: 200px; display: flex; align-items: center; justify-content: center; }
-    .lg-energy { font-size: 12px; font-weight: bold; color: #fff; background: #009e49; padding: 2px 6px; border-radius: 2px; display: inline-block;} /* 세탁기는 A등급(초록색)이 많으므로 초록색 적용 */
+    .lg-energy { font-size: 12px; font-weight: bold; color: #fff; background: #009e49; padding: 2px 6px; border-radius: 2px; display: inline-block;}
     .lg-price-box { margin-top: auto; }
     .lg-save-text { color: #ea1917; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
     .lg-price { font-size: 22px; font-weight: bold; color: #000; }
@@ -32,7 +32,6 @@ def main():
     </style>
     """, unsafe_allow_html=True)
 
-    # 세탁기 전용 상태 관리 (wm_step, wm_data)
     if 'wm_step' not in st.session_state:
         st.session_state.wm_step = 1
         st.session_state.wm_data = {}
@@ -42,7 +41,6 @@ def main():
     st.markdown("에너지 절약부터 완벽한 옷감 케어까지, 당신의 세탁 라이프를 바꿀 LG 세탁기를 찾아보세요.")
     st.divider()
 
-    # 뒤로가기 버튼
     if st.session_state.wm_step > 1 and st.session_state.wm_step != 4:
         if st.button("⬅️ Zurück (이전)", key="back_btn_wm"):
             st.session_state.wm_step -= 1
@@ -51,28 +49,24 @@ def main():
     col_q, col_empty = st.columns([2, 1])
     
     with col_q:
-        # Step 1: 세탁 용량 (가구원 수)
         if st.session_state.wm_step == 1:
             st.subheader("1. 주로 세탁을 함께 하는 가구원 수는 몇 명인가요?")
             if st.button("👤 1~2인 가구 (적은 양을 자주 세탁해요 / 7-8kg)"): st.session_state.wm_data['capacity'] = "소형"; st.session_state.wm_step = 2; st.rerun()
             if st.button("👨‍👩‍👦 3~4인 가구 (일반적인 표준 용량 / 9-10kg)"): st.session_state.wm_data['capacity'] = "표준"; st.session_state.wm_step = 2; st.rerun()
             if st.button("👨‍👩‍👧‍👦 대가족 또는 이불 빨래 잦음 (최대 용량 / 11kg 이상)"): st.session_state.wm_data['capacity'] = "대형"; st.session_state.wm_step = 2; st.rerun()
 
-        # Step 2: 폼팩터 (세탁건조기 여부)
         elif st.session_state.wm_step == 2:
             st.subheader("2. 어떤 형태의 세탁기를 찾고 계신가요?")
             if st.button("🧺 세탁에만 집중하는 클래식 세탁기 (Frontlader)"): st.session_state.wm_data['type'] = "세탁기"; st.session_state.wm_step = 3; st.rerun()
             if st.button("☀️ 세탁과 건조를 한 번에 끝내는 세탁건조기 (Waschtrockner)"): st.session_state.wm_data['type'] = "세탁건조기"; st.session_state.wm_step = 3; st.rerun()
             if st.button("📏 공간이 좁아 쏙 들어가는 슬림형 디자인 (Slim-Design)"): st.session_state.wm_data['type'] = "슬림형"; st.session_state.wm_step = 3; st.rerun()
 
-        # Step 3: 핵심 편의 기능
         elif st.session_state.wm_step == 3:
             st.subheader("3. 절대 포기할 수 없는 LG만의 핵심 기술은 무엇인가요?")
             if st.button("🧠 무게와 옷감 재질을 스스로 파악해 보호하는 지능형 세탁 (AI DD™)"): st.session_state.wm_data['feature'] = "AI_DD"; st.session_state.wm_step = 4; st.rerun()
             if st.button("⏱️ 39분 만에 빠르고 깨끗하게 세탁 완료 (TurboWash™ 360°)"): st.session_state.wm_data['feature'] = "TurboWash"; st.session_state.wm_step = 4; st.rerun()
             if st.button("💨 스팀으로 집먼지 진드기와 알레르기 유발 물질 제거 (Steam™)"): st.session_state.wm_data['feature'] = "Steam"; st.session_state.wm_step = 4; st.rerun()
 
-    # Step 4: 결과 화면
     if st.session_state.wm_step == 4:
         st.balloons()
         st.markdown("### 🎉 Ihre perfekte LG Waschmaschine (당신을 위한 완벽한 세탁기)")
@@ -97,7 +91,6 @@ def main():
 
         wm_type = st.session_state.wm_data.get('type', '')
         
-        # 독일 시장 기준 매칭 로직
         if wm_type == "세탁건조기":
             cards = [
                 create_lg_card_html(["Waschtrockner", "AI DD"], "LG Waschtrockner (9kg Waschen / 6kg Trocknen)", "V7WD96H1", "120", "Spare 150,00 €", "799,00 €", "949,00 €", "Weitere Infos", "Jetzt kaufen", "E", is_primary=True),
@@ -110,7 +103,25 @@ def main():
                 create_lg_card_html(["Slim", "AI DD"], "LG Slim Waschmaschine Serie 5 (8.5kg)", "F4WV508S1E", "150", "Spare 100,00 €", "549,00 €", "649,00 €", "Weitere Infos", "Jetzt kaufen", "A"),
                 create_lg_card_html(["Kompakt", "Direct Drive"], "LG Slim Waschmaschine (6.5kg)", "F2WV3S6S3E", "95", "Spare 50,00 €", "429,00 €", "479,00 €", "Weitere Infos", "Jetzt kaufen", "B")
             ]
-        else: # 일반 세탁기 (대용량/표준)
+        else:
             cards = [
                 create_lg_card_html(["Bestseller", "A -10%"], "LG Waschmaschine Serie 7 (10kg) mit TurboWash™", "F4V710WTSE", "340", "Spare 200,00 €", "699,00 €", "899,00 €", "Weitere Infos", "Jetzt kaufen", "A", is_primary=True),
-                create_lg_card_html(["Große Kapazität", "Premium"], "LG Waschmaschine Serie 9 (11kg) mit AI DD™", "F6V9B9W", "180", "Spare 2
+                create_lg_card_html(["Große Kapazität", "Premium"], "LG Waschmaschine Serie 9 (11kg) mit AI DD™", "F6V9B9W", "180", "Spare 250,00 €", "849,00 €", "1.099,00 €", "Weitere Infos", "Jetzt kaufen", "A"),
+                create_lg_card_html(["Eco", "Steam"], "LG Waschmaschine Serie 5 (8kg) mit Dampf", "F4V508WSE", "420", "Spare 120,00 €", "479,00 €", "599,00 €", "Weitere Infos", "Jetzt kaufen", "A")
+            ]
+
+        col1, col2, col3 = st.columns(3)
+        with col1: st.markdown(cards[0], unsafe_allow_html=True)
+        with col2: st.markdown(cards[1], unsafe_allow_html=True)
+        with col3: st.markdown(cards[2], unsafe_allow_html=True)
+
+        st.write("<br><br>", unsafe_allow_html=True)
+        col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+        with col_btn2:
+            if st.button("🔄 Test wiederholen (다시 테스트하기)", use_container_width=True):
+                st.session_state.wm_step = 1
+                st.session_state.wm_data = {}
+                st.rerun()
+
+if __name__ == "__main__":
+    main()
